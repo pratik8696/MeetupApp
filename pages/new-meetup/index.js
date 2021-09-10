@@ -1,13 +1,30 @@
-import React from 'react'
+import React,{useState} from 'react'
+import {useRouter} from "next/router"
 import NewMeetupForm from "../../components/meetups/NewMeetupForm";
+import Spinner from '../../components/ui/Spinner';
 function NewMeetup() {
-    function addmeetuphandler(data)
+    const [loading,setLoading]=useState(false);
+    const router=useRouter();
+    async function addmeetuphandler(data)
     {
-        console.log(data);
+        setLoading(true);
+        const response=await fetch('/api/new-meetup',{
+            method:'POST',
+            body:JSON.stringify(data),
+        });
+
+        
+        const datainresponse=response.json();
+
+        console.log(datainresponse);
+        setLoading(false);
+        router.replace('/');
     }
     return (
         <div>
-            <NewMeetupForm onAddMeetup={addmeetuphandler} />
+            {loading && <Spinner />}
+            {!loading && <NewMeetupForm onAddMeetup={addmeetuphandler} />}
+            
         </div>
     )
 }
